@@ -1,6 +1,6 @@
 dependencies: []
 galaxy_info:
-  role_name: chefserver
+  role_name: awx
   author: Ripon Banik
   description: Install and Configure Opensource Ansible Tower (AWX)
   company: Lyrcis Pvt Ltd (optional)
