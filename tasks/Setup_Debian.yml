@@ -1,0 +1,54 @@
+---
+    - name: Install pip packages
+      pip: 
+        name={{ item.name }}
+        version={{ item.version | default(omit) }}
+      with_items:
+        - name: docker
+      tags:
+        - pip
+        - packages    
+
+    - name: Install packages from repo
+      package: 
+        name={{ item.name }}
+        version={{ item.version | default(omit) }}
+      with_items:        
+        - name: git
+    
+    - name: Clone AWX project from GitHub
+      git:
+        repo: '{{ awx_repo }}' 
+        dest: '{{ installer_path }}'
+        update: no
+
+    - name: Ensure PostgreSQL Data is Persisted
+      ini_file:
+        path: '{{ installer_path }}/installer/inventory'
+        section: all:vars
+        option: postgres_data_dir
+        value: '{{ data_path }}'
+
+    - name: Create PostgreSQL Data Path
+      file:
+        path: '{{ data_path }}'
+        state: directory
+
+    - name: Add custom dns server
+      ini_file:
+        path: '{{ installer_path }}/installer/inventory'
+        section: all:vars
+        option: awx_alternate_dns_servers
+        value: '{{ dns_servers }}' 
+
+    - name: Check to see if AWX is running on port 80 and returns a status 200
+      ignore_errors: true
+      uri:
+        url: http://localhost:80
+      register: check_awx
+
+    - name: Run the AWX installation playbook
+      command: "ansible-playbook -i {{ awx_inventory }} install.yml"
+      args:
+        chdir: '{{ installer_path }}/installer'
+      when: check_awx.status != 200  
