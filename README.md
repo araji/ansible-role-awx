@@ -26,7 +26,10 @@ Modiy to specify our own dns server. Needed to resolve hostname from docker cont
     awx_inventory: inventory
 
 To use your own inventory file.
+ 
+    awx_version: master
 
+To install particular vervison modify it to include git branch name, tag etc.
 
 ## Dependencies
 
