@@ -1,6 +1,7 @@
 ---
 # defaults file for awx
 awx_repo: 'https://github.com/ansible/awx.git'
+awx_version: master
 installer_path: /tmp/awx
 data_path: /var/lib/pgdocker
 dns_servers: "8.8.8.8,8.8.4.4"

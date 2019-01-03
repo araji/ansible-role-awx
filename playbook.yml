@@ -1,7 +1,15 @@
 ---
 - hosts: all
+  pre_tasks:
+        - name: install container-selinux dependency
+          yum:
+            name: container-selinux
+            enablerepo: rhui-REGION-rhel-server-extras
+            state: present
+          when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
   roles:
     - role: geerlingguy.docker
     - role: geerlingguy.pip
     - role: riponbanik.awx
+
       

@@ -37,6 +37,22 @@ VM (on-perm or cloud) is needed to install. Tested with the following OS -
    3. Unbuntu 18.04 (Bionic) 
    4. Ubuntu 16.04 (Xenial)  
 
+geerlingguy.docker requires container-selinux yum package and can be installed via pre_task in the playbook 
+
+- name: install container-selinux dependency for AWS
+          yum:
+            name: container-selinux
+            enablerepo: rhui-REGION-rhel-server-extras
+            state: present
+          when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
+
+- name: install container-selinux dependency for non-AWS
+          yum:
+            name: container-selinux
+            enablerepo: rhel-7-server-extras-rpms
+            state: present
+          when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
+
 ## Example Playbook
 
     - name: Install AWX
@@ -53,6 +69,20 @@ VM (on-perm or cloud) is needed to install. Tested with the following OS -
       roles:
         - role:  riponbanik.awx
           dns_servers: '1.1.1.1, 2.2.2.2'
+
+    - name: Install AWX in AWS 
+      hosts: all
+      pre_tasks:
+        - name: install container-selinux dependency
+          yum:
+            name: container-selinux
+            enablerepo: rhui-REGION-rhel-server-extras
+            state: present
+          when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == '7'
+      roles:
+        - role: geerlingguy.docker
+        - role: geerlingguy.pip
+        - role: riponbanik.awx
 
 ## Installation
 
